@@ -1,5 +1,6 @@
 #ifndef WILD_ENC_CUST_TBL_H
 #define WILD_ENC_CUST_TBL_H
+#include <pokeagb/pokeagb.h>
 
 struct Encounter{
 	u16 species;

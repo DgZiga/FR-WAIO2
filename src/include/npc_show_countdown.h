@@ -1,5 +1,6 @@
 #ifndef NPC_SHOW_CTDWN_H
 #define NPC_SHOW_CTDWN_H
+#include <pokeagb/pokeagb.h>
 
 
 struct Npc_show_countdown{

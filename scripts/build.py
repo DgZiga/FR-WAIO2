@@ -142,38 +142,6 @@ def main():
         for file in files:
             process_img(file, frame_data)
 
-    #array must be sorted by 
-    frame_data = sorted(frame_data, key=lambda x: x['frame_start']) 
-
-    #create frame_data c files from populated frame_data variable
-    includes = ""
-    drawing_keyframes = "struct drawing_keyframe drawing_keyframes[] = {"
-    for frame in frame_data:
-        drawing_keyframes += Template("""{  
-            .bgid=$bgid,
-            .asset=ASSET($bgid,$frame_start),
-            .frame_start=$frame_start
-        },""").substitute(frame)
-        includes += Template("""#include "../built_graphics/bg${bgid}_${frame_start}.h"
-""").substitute(frame)
-    drawing_keyframes+="END_DRAWING_FRAME};"
-
-    body = dict(body=includes+drawing_keyframes)
-    config_c_contents = Template("""
-#ifndef CONFIG_C
-#define CONFIG_C
-
-#include "config.h"
-
-$body
-
-#endif
-""").substitute(body)
-
-    config_c = open("src/config/config.c", "w")
-    config_c.write(config_c_contents)
-    config_c.close()
-
     globs = {
         '**/*.c': process_c
     }
