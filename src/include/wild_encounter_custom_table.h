@@ -5,11 +5,11 @@
 struct Encounter{
 	u16 species;
 	u8 lvl;
-	//Please note that after these 3 bytes there should be a 0xFF as padding to keep everything 4-aligned
+    u8 filler;
 };
 
 struct Wild_enocunter_tbl{
-	u16 person_id;
-	struct Encounter encounters[4];
+	u16 entriesNo;
+	struct Encounter encounters[];
 };
 #endif

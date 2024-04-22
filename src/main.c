@@ -9,28 +9,27 @@ extern u32 mod(u32 x, u32 y);
 extern u16 person_id_by_npc_id_and_map_and_bank(u8 npc_id, u8 map, u8 bank);
 void load_script(u16 person_id, struct Encounter selected_encounter, u8 npcId);
 
-void load_wildbattle_script(u8 npcId) {
+void load_wildbattle_script(struct Wild_enocunter_tbl *encounters, u8 npcId) {
 	u16 steps = 10;
 	
-	struct NpcState npc = *(npc_states+npcId);			    		//Retrieve the NPC_STATE of the NPC the player is about to fight
-	
-	struct Wild_enocunter_tbl *encounter_tbl_ptr = (struct Wild_enocunter_tbl *)ENC_TBL_ADDR; //Start of encounter_tbl in ROM
-	struct Npc_show_countdown *npc_show_ctdwn = (struct Npc_show_countdown *)NPC_CTDWN_ADDR; 
-
-    //Lookup wild encounter tbl
+	struct NpcState npc = *(npc_states+npcId);
     u16 person_id = person_id_by_npc_id_and_map_and_bank(npc.local_id, npc.local_map_number, npc.local_map_bank);
 
-    //struct Wild_enocunter_tbl *encounter_tbl_ptr = &encounter_tbl; //For some reason this adds +1 to the address?
-    while(encounter_tbl_ptr->person_id != person_id){
-        encounter_tbl_ptr++;
-    }
+    struct Encounter *selected_encounter;
+    //Choose a random encounter
+    u8 selected_pkmn = mod(rand(), encounters->entriesNo);
+    //dprintf("generated: 0x%x\n", selected_pkmn);
+    //dprintf("encounters: 0x%x\n", encounters);
+    //dprintf("selected_pkmn: 0x%x\n", selected_pkmn);
+    selected_encounter = &((encounters->encounters)[selected_pkmn]);
+    //dprintf("selected_encounter: 0x%x\n", selected_encounter);
+    //dprintf("selected_encounter: 0x%x\n", &((encounters->encounters)[0]));
+    //dprintf("selected_encounter: 0x%x\n", &((encounters->encounters)[1]));
+    //dprintf("selected_encounter: 0x%x\n", &((encounters->encounters)[2]));
+
+
+
     
-    struct Encounter selected_encounter;
-    do{	//Choose a random encounter
-        u8 selected_pkmn = mod(rand(), 4);
-        dprintf("generated: 0x%x\n", selected_pkmn);
-        selected_encounter = encounter_tbl_ptr->encounters[selected_pkmn];
-    }while (selected_encounter.species == 0xFFFF);
     /*
     //Look for a free spot to add the npc countdown
     for(u8 i = 0; i<10; i++){
@@ -42,32 +41,29 @@ void load_wildbattle_script(u8 npcId) {
     }*/
     
     //Load hidesprite and wildbattle script into memory and exec it
-    load_script(person_id, selected_encounter, npcId);
-}
-void load_script(u16 person_id, struct Encounter selected_encounter, u8 npcId){
     void *script_slot = (void *)0x0202D4B4; //TODO refactor
 	void *script_slot_iterable = script_slot;
-	struct NpcState npc = *(npc_states+npcId); //Retrieve the NPC_STATE of the NPC the player is about to fight
+    dprintf("in slot: 0x%x\n", script_slot);
 
-    *((u8 *)script_slot_iterable) = 0x29; //setflag
+    *((u8 *)script_slot_iterable) = 0x29; //setflag 4
     script_slot_iterable++;
-    *((u16 *)script_slot_iterable) = person_id; 
+    *((u16 *)script_slot_iterable) = person_id; //5
     script_slot_iterable+= 2;
-    *((u8 *)script_slot_iterable) = 0x53; //hidesprite
+    *((u8 *)script_slot_iterable) = 0x53; //hidesprite 7
     script_slot_iterable++;
-    *((u16 *)script_slot_iterable) = npc.local_id; 
+    *((u16 *)script_slot_iterable) = npc.local_id;  //8
     script_slot_iterable += 2;
-    *((u8 *)script_slot_iterable) = 0xB6; //wildbattle
+    *((u8 *)script_slot_iterable) = 0xB6; //wildbattle 10
     script_slot_iterable++;
-    *((u16 *)script_slot_iterable) = selected_encounter.species; 
+    *((u16 *)script_slot_iterable) = selected_encounter->species;  //11
     script_slot_iterable+= 2;
-    *((u8 *)script_slot_iterable) = selected_encounter.lvl; 
+    *((u8 *)script_slot_iterable) = selected_encounter->lvl; //13
     script_slot_iterable++;
-    *((u16*)script_slot_iterable) = 0x0000; 
+    *((u16*)script_slot_iterable) = 0x0000; //14
     script_slot_iterable+= 2;
-    *((u8 *)script_slot_iterable) = 0xB7; //dowildbattle
+    *((u8 *)script_slot_iterable) = 0xB7; //dowildbattle 16
     script_slot_iterable++;
-    *((u8 *)script_slot_iterable) = 0x02; //end
+    *((u8 *)script_slot_iterable) = 0x02; //end 17
     
 }
 /*

@@ -125,7 +125,10 @@ double_battle_check_return_normal:
     BX        r0
 
 double_battle_check_return_skip:
-    MOV r0, r5 ;call main with npcId, this will put the script into script_slot
+    ;TODO: carica i dati dallo script 
+    mov r0, r6
+    add r0, #7 ;first 5 bytes are 'callasm', the one after is 'end', the one after is a padding 0xFF
+    MOV r1, r5 ;call main with encounter table and npcId, this will put the script into script_slot
     BL load_wildbattle_script
     
     ;taken from 08080356 in order to correctly setup script environment
