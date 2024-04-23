@@ -8,11 +8,28 @@
 extern u32 mod(u32 x, u32 y);
 extern u16 person_id_by_npc_id_and_map_and_bank(u8 npc_id, u8 map, u8 bank);
 void load_script(u16 person_id, struct Encounter selected_encounter, u8 npcId);
+void load_wildbattle_script(struct Wild_enocunter_tbl *encounters, u8 npcId);
+
+
+void callasm_entrypoint(){
+    u8 *current_ptr_script = script_env_1.pointer_script;
+    struct Wild_enocunter_tbl *encounters_tbl = (struct Wild_enocunter_tbl *)(current_ptr_script+6); //skip 5 bytes: (GOTO) and filler 0xF
+    u8 id = 0xFF;
+    for (u8 i = 0; i < sizeof(npc_states)/ sizeof(npc_states[0]); i++) {
+        if(npc_states[i].local_id == var_800F){
+            id = i;
+        }
+    }
+    if(id == 0xFF){
+        return;
+    }
+    load_wildbattle_script(encounters_tbl, id);
+}
 
 void load_wildbattle_script(struct Wild_enocunter_tbl *encounters, u8 npcId) {
 	u16 steps = 10;
 	
-	struct NpcState npc = *(npc_states+npcId);
+    struct NpcState npc = *(npc_states+npcId);
     u16 person_id = person_id_by_npc_id_and_map_and_bank(npc.local_id, npc.local_map_number, npc.local_map_bank);
 
     struct Encounter *selected_encounter;
@@ -29,7 +46,7 @@ void load_wildbattle_script(struct Wild_enocunter_tbl *encounters, u8 npcId) {
 
 
 
-    
+
     /*
     //Look for a free spot to add the npc countdown
     for(u8 i = 0; i<10; i++){

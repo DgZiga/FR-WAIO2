@@ -16,6 +16,10 @@ LDR r0, =double_battle_check_hijack|1
 BX r0
 .pool
 
+.org 0x0880008C ;test script
+.word 0x0883039C|1
+.pool
+
 .org freespace
 .thumb
 .align 2
@@ -23,22 +27,6 @@ mod:
 	SWI 0x6
     MOV r0, r1
     BX LR
-
-.align 4
-encounter_tbl:
-    .halfword 0x123
-    .halfword 1
-    .byte 1
-    .byte 0xFF
-    .halfword 2
-    .byte 2
-    .byte 0xFF
-    .halfword 3
-    .byte 3
-    .byte 0xFF
-    .halfword 0xFFFF
-    .byte 0xFF
-    .byte 0xFF
 
 .align 2
 .importobj "./build/linked.o"
@@ -127,7 +115,7 @@ double_battle_check_return_normal:
 double_battle_check_return_skip:
     ;TODO: carica i dati dallo script 
     mov r0, r6
-    add r0, #7 ;first 5 bytes are 'callasm', the one after is 'end', the one after is a padding 0xFF
+    add r0, #0xB ;first 5 bytes are 'callasm', the 5 after are 'goto 0x0202D4B4', the one after is a padding 0xFF
     MOV r1, r5 ;call main with encounter table and npcId, this will put the script into script_slot
     BL load_wildbattle_script
     
@@ -170,6 +158,8 @@ custom_engagement_script:
     .word 0x0202D4B4
 
 .align 4
+.thumb
+
 goto_r1:
     BX r1;
     
