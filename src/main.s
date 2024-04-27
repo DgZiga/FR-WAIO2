@@ -16,10 +16,6 @@ LDR r0, =double_battle_check_hijack|1
 BX r0
 .pool
 
-.org 0x0880008C ;test script
-.word 0x0883039C|1
-.pool
-
 .org freespace
 .thumb
 .align 2
@@ -94,7 +90,7 @@ double_battle_check_hijack:
     LDRB    r0, [r6]
     MOV     r1, #0x5C
     CMP     r0, r1
-    BEQ     double_battle_check_continue
+    BEQ     double_battle_check_continue ;if it's a trainerbattle, continue as normal
     POP     {r0-r1}
     B        double_battle_check_return_skip
 
@@ -113,7 +109,6 @@ double_battle_check_return_normal:
     BX        r0
 
 double_battle_check_return_skip:
-    ;TODO: carica i dati dallo script 
     mov r0, r6
     add r0, #0xB ;first 5 bytes are 'callasm', the 5 after are 'goto 0x0202D4B4', the one after is a padding 0xFF
     MOV r1, r5 ;call main with encounter table and npcId, this will put the script into script_slot
@@ -154,7 +149,6 @@ custom_engagement_script:
     .byte 0x00 ; special 0x37
     .byte 0x27 ; waitstate
     .byte 0x05 ; goto
-    ;.word 0x02024090
     .word 0x0202D4B4
 
 .align 4

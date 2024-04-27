@@ -156,6 +156,34 @@ def main():
 	#ARMPIS
     cmd = ['armips', './src/main.s','-sym','symbols.txt', '-equ', 'freespace', customAddr]
     run_command(cmd)
+
+
+    callasm_entrypoint_line = None 
+    #compile sample script with data from symbols.txt
+    with open('./symbols.txt', 'r') as file:
+        for line in file:
+            if 'callasm_entrypoint' in line:
+                callasm_entrypoint_line = line.strip()
+
+    if callasm_entrypoint_line:
+        callasm_entrypoint_address = hex(int(callasm_entrypoint_line.split(" ")[0], 16)+1)
+        print("found callasm_entrypoint address: "+callasm_entrypoint_address)
+        placeholder = '{{CALLASM_ENTRYPOINT_ADDR}}'
+        sample_script_file = './sample_script.txt'
+        compiled_script_file = './compiled_script.txt'
+        with open(sample_script_file, 'r') as file:
+            # Read all lines from the input file
+            lines = file.readlines()
+
+        with open(compiled_script_file, 'w') as file:
+            for line in lines:
+                modified_line = line.replace(placeholder, callasm_entrypoint_address)
+                file.write(modified_line)
+
+        
+    
+
+
     print("DONE")
  
 if __name__ == '__main__':

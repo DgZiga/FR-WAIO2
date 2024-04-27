@@ -10,4 +10,4 @@ build/*
 *.id0
 *.id1
 *.json
-
+compiled_script.txt
