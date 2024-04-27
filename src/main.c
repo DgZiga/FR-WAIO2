@@ -60,27 +60,26 @@ void load_wildbattle_script(struct Wild_enocunter_tbl *encounters, u8 npcId) {
     //Load hidesprite and wildbattle script into memory and exec it
     void *script_slot = (void *)0x0202D4B4; //TODO refactor
 	void *script_slot_iterable = script_slot;
-    dprintf("in slot: 0x%x\n", script_slot);
-
-    *((u8 *)script_slot_iterable) = 0x29; //setflag 4
+    
+    *((u8 *)script_slot_iterable) = 0x29; //setflag 
     script_slot_iterable++;
-    *((u16 *)script_slot_iterable) = person_id; //5
+    *((u16 *)script_slot_iterable) = person_id; 
     script_slot_iterable+= 2;
-    *((u8 *)script_slot_iterable) = 0x53; //hidesprite 7
+    *((u8 *)script_slot_iterable) = 0x53; //hidesprite 
     script_slot_iterable++;
-    *((u16 *)script_slot_iterable) = npc.local_id;  //8
+    *((u16 *)script_slot_iterable) = npc.local_id;  
     script_slot_iterable += 2;
-    *((u8 *)script_slot_iterable) = 0xB6; //wildbattle 10
+    *((u8 *)script_slot_iterable) = 0xB6; //wildbattle 
     script_slot_iterable++;
-    *((u16 *)script_slot_iterable) = selected_encounter->species;  //11
+    *((u16 *)script_slot_iterable) = selected_encounter->species;  //wildbattle species
     script_slot_iterable+= 2;
-    *((u8 *)script_slot_iterable) = selected_encounter->lvl; //13
+    *((u8 *)script_slot_iterable) = selected_encounter->lvl; //wildbattle lvl
     script_slot_iterable++;
-    *((u16*)script_slot_iterable) = 0x0000; //14
+    *((u16*)script_slot_iterable) = 0x0000; //wildbattle item
     script_slot_iterable+= 2;
-    *((u8 *)script_slot_iterable) = 0xB7; //dowildbattle 16
+    *((u8 *)script_slot_iterable) = 0xB7; //dowildbattle
     script_slot_iterable++;
-    *((u8 *)script_slot_iterable) = 0x02; //end 17
+    *((u8 *)script_slot_iterable) = 0x02; //end
     
 }
 /*

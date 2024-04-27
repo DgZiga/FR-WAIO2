@@ -16,6 +16,12 @@ LDR r0, =double_battle_check_hijack|1
 BX r0
 .pool
 
+ .org 0x0804C064 ; disable DMA for box RAM
+.align 2
+.byte 00 
+.byte 21
+.pool
+
 .org freespace
 .thumb
 .align 2
@@ -140,7 +146,7 @@ double_battle_check_return_skip:
 
 .align 4
 custom_engagement_script:
-    .byte 0x6A ; lockall
+    .byte 0x69 ; lockall
     .byte 0x25
     .byte 0x38
     .byte 0x00 ; special 0x38
