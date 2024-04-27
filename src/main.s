@@ -22,6 +22,21 @@ BX r0
 .byte 21
 .pool
 
+.org 0x0806D5F6 ; hijack step routine to check showsprites
+.thumb
+.align 2
+LDR r0, =check_showsprite_every_step_hijack|1
+BX r0
+MOV r0, r0
+.pool
+
+
+.org 0x088000A4 ;debug, remove this if you see it
+.thumb
+.align 2
+.word 0x88303a1
+.pool
+
 .org freespace
 .thumb
 .align 2
@@ -34,6 +49,9 @@ mod:
 .importobj "./build/linked.o"
     
 .align 2
+
+; ------------------------- CUSTOM APOPLYMOVEMENT FOR APPROACH -------------------------
+
 custom_movement_hijack:
     ;replaced code:
     LSL     R0, R0, #0x1C
@@ -90,6 +108,9 @@ copy_of_08063F84_continue:
     BX      R1
     
 
+
+
+; ---------------------- HIJACK DOUBLE BATTLE CHECK TO CUSTOMIZE WHAT HAPPENS AFTER ENGAGEMENT -------------------------------
 
 double_battle_check_hijack:
     PUSH    {r0-r1}
@@ -156,6 +177,43 @@ custom_engagement_script:
     .byte 0x27 ; waitstate
     .byte 0x05 ; goto
     .word 0x0202D4B4
+
+
+
+
+
+; ---------------------- CHECK SHOWSPRITE EVERY STEP -------------------------------
+
+.align 4
+.thumb
+check_showsprite_every_step_hijack:
+    PUSH {r0-r5}
+    LDR r3, =check_showsprite_every_step|1
+    BL goto_r3
+
+END:
+    POP {r0-r5}
+    /*Instructions from 0x806D5F6*/
+    LSL r0, r0, #0x18
+    LSR r0, r0, #0x18
+    CMP r0, #0x1
+    BEQ BRANCHER
+    MOV r0, r5
+    MOV r1, r4
+    LDR r3, =0x0806DA11
+    BL goto_r3
+    LSL r0, r0, #0x18
+    LSR r0, r0, #0x18
+    CMP r0, #0x1
+    BEQ BRANCHER
+    MOV r0, r4
+    LDR r0, =0x0806D611
+    BX r0
+
+BRANCHER:
+    LDR r0, =0x0806D651
+    BX r0
+
 
 .align 4
 .thumb

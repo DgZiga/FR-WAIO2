@@ -542,6 +542,7 @@ player_avatar_get_type = 0x0805c808|1;
  */
 
 flag_set = 0x0806e680|1;
+flag_clear = 0x0806E6A8|1;
 hm_phase_1 = 0x03005024;
 script_cmds = 0x0815f9b4;
 script_cmds_max = 0x0815fd08;
