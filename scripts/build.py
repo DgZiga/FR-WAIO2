@@ -179,6 +179,8 @@ def main():
             for line in lines:
                 modified_line = line.replace(placeholder, callasm_entrypoint_address)
                 file.write(modified_line)
+    else:
+        raise Exception("unable to find callasm_entrypoint in symbols.txt file: no compiled_script can be created at this time. Check your compilation.")
 
         
     
