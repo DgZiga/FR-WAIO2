@@ -4,7 +4,6 @@
 #include "include/wild_encounter_custom_table.h"
 #include "include/npc_show_countdown.h"
 
-//extern struct Wild_enocunter_tbl encounter_tbl;
 POKEAGB_EXTERN void flag_clear(u16 flag);
 extern u32 mod(u32 x, u32 y);
 extern u16 person_id_by_npc_id_and_map_and_bank(u8 npc_id, u8 map, u8 bank);
@@ -73,7 +72,7 @@ void load_wildbattle_script(struct Wild_enocunter_tbl *encounters, u8 npcId) {
     
 }
 
-//To be executed at every step (see /src/hooker.s and /hooks), checks if any npc had its countdown expire and, should that be the case, execs a showsprite
+//To be executed at every step (see /src/main.s), checks if any npc had its countdown expire and, should that be the case, execs a clearflag, which will show NPC on next step
 void check_showsprite_every_step(){
 	struct Npc_show_countdown *npc_show_ctdwn = (struct Npc_show_countdown *)NPC_CTDWN_ADDR;
 	for(u8 i = 0; i<10; i++){	//For every countdown position
@@ -83,8 +82,38 @@ void check_showsprite_every_step(){
 		npc_show_ctdwn[i].steps_no--;	//Decrease the number of steps needed
 		
 		if(npc_show_ctdwn[i].steps_no == 0){	
-			flag_clear(npc_show_ctdwn[i].person_id); 
-			npc_show_ctdwn[i].person_id = 0;
+
+            struct MapHeader *mapHeader = mapheader_by_mapnumbers(npc_states[0].local_map_bank, npc_states[0].local_map_number);
+            struct RomNpc* romNpcs = mapHeader->events->npcs;
+            u8 romNpcsNo = mapHeader->events->num_npcs;
+            u8 id = 0xFF;
+            for (u8 j = 0; j < romNpcsNo; j++) {
+                if (romNpcs[j].local_id == npc_show_ctdwn[i].person_id) {
+                    id = j;
+                }
+            }
+            if(id == 0xFF){
+                flag_clear(npc_show_ctdwn[i].person_id); 
+                npc_show_ctdwn[i].person_id = 0;
+                continue;
+            }
+
+            struct RomNpc romNpc = romNpcs[id];
+            u16 npcX = (romNpc.x) +7; //+7 because coords are translated once in game (black padding is added around the map)
+            u16 npcY = (romNpc.y) +7; //+7 because coords are translated once in game (black padding is added around the map)
+            u16 playerX = npc_states[0].to.x;
+            u16 playerY = npc_states[0].to.y;
+            u16 xDelta = (playerX > npcX ? (playerX-npcX) : (npcX-playerX));
+            u16 yDelta = (playerY > npcY ? (playerY-npcY) : (npcY-playerY));
+
+            //dprintf("npcX : 0x%x, npcY: 0x%x, playerX: 0x%x, playerY: 0x%x, romNpcs: 0x%x, id: 0x%x\n", npcX, npcY, playerX, playerY, romNpcs, id);
+
+            if(xDelta >= 8 || yDelta >= 6){ //out of sight: from my research, 8 tiles away on the horizontal axis and 6 tiles away on the vertical axis is the minimum delta required for the npc to be out of screen
+                flag_clear(npc_show_ctdwn[i].person_id); 
+                npc_show_ctdwn[i].person_id = 0;
+            } else {
+        		npc_show_ctdwn[i].steps_no++;
+            }
 		} 
 	}
 }

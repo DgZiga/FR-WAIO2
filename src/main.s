@@ -16,7 +16,7 @@ LDR r0, =double_battle_check_hijack|1
 BX r0
 .pool
 
- .org 0x0804C064 ; disable DMA for box RAM
+.org 0x0804C064 ; disable DMA for box RAM
 .align 2
 .byte 00 
 .byte 21
@@ -30,12 +30,6 @@ BX r0
 MOV r0, r0
 .pool
 
-
-.org 0x088000A4 ;debug, remove this if you see it
-.thumb
-.align 2
-.word 0x88303a1
-.pool
 
 .org freespace
 .thumb
