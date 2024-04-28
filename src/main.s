@@ -30,6 +30,13 @@ BX r0
 MOV r0, r0
 .pool
 
+.org 0x0805506A ; hijack npc load routine to modify custom npcs
+.thumb
+.align 2
+LDR r2, =npc_tint_hijack|1
+BX r2
+.pool
+
 
 .org freespace
 .thumb
@@ -208,6 +215,32 @@ BRANCHER:
     LDR r0, =0x0806D651
     BX r0
 
+
+
+
+
+
+
+; ---------------------- NPC TINT -------------------------------
+
+.align 4
+.thumb
+npc_tint_hijack:
+    ;original code:
+    LDMIA R0!, {R2,R5,R6} 
+    STMIA R1!, {R2,R5,R6}
+    LDMIA R0!, {R3-R5}
+    STMIA R1!, {R3-R5}
+
+    ;now at r1 - 0x18 is the npc we just loaded
+    PUSH {r0-r1}
+    SUB r1, #0x18
+    MOV r0, #0x1B
+    STRB r0, [r1, #1]
+    POP {r0-r1}
+
+    LDR r0, =0x08055072|1
+    BX r0
 
 .align 4
 .thumb
