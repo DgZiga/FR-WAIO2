@@ -23,7 +23,11 @@ at 0805506A we copy rom npc in ram, we can modify here
 we scan the map npcs, if they have callasm 0x??????? goto 0x202D4B4 they are a custom npc
 if they are a custom npc, personalize their picture number
 */
+#include <pokeagb/pokeagb.h>
+#include "../config.h"
+#include "agb_debug/debug.c"
+#include "wild_encounter_custom_table.h"
 
-void npc_tint_asm_entrypoint();
+void npc_tint_asm_entrypoint(struct RomNpc* romNpcLoadedAddress);
 
 #endif
