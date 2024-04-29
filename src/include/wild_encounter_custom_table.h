@@ -9,7 +9,8 @@ struct Encounter{
 };
 
 struct Wild_enocunter_tbl{
-	u16 entriesNo;
+	u8 entriesNo;
+    u8 filler; //RFU
 	struct Encounter encounters[];
 };
 #endif

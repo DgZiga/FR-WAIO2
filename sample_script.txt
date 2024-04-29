@@ -4,7 +4,8 @@
 callasm {{CALLASM_ENTRYPOINT_ADDR}}
 goto 0x202D4B4
 #org @data
-#raw i 0x0003
+#raw b 0x03
+#raw b 0xFF
 #raw i 0x0001
 #raw b 0x1
 #raw b 0xFF
