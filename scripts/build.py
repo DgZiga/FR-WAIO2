@@ -62,23 +62,14 @@ def process_c(in_file):
  
 from string import Template
 
-def process_img(in_file, frame_data):
+def process_img(in_file):
     '''Compile IMGs'''
-
-    # populate frame_data
-    filename = os.path.splitext(os.path.basename(in_file))[0][2:]
-    bgid = filename.split('_')[0]
-    frame_start = filename.split('_')[1]
-    frame_data.append(dict(
-        bgid=bgid,
-        frame_start=int(frame_start)
-    ))
 
     # imgs are first converted to .c/.h files, then built like the rest of the source code
     out_file = os.path.join(os.path.dirname(in_file), '..', 'built_graphics', os.path.basename(in_file))
 
     print('Running Grit on '+os.path.abspath(out_file))
-    cmd = ['grit', in_file, '-o', out_file, '-mp'+bgid] + GRITFLAGS
+    cmd = ['grit', in_file, '-o', out_file] + GRITFLAGS
     run_command(cmd)
 
 
@@ -131,16 +122,14 @@ def main():
     clear_folder(BUILT_GRAPHICS)
     
     img_globs = {
-        './**/*.png',
+        '.src/**/*.png',
         './**/*.bmp'
     }
-
-    frame_data =[]
 
     for globstr in img_globs:
         files = glob(os.path.join(ROOT, globstr), recursive=True)
         for file in files:
-            process_img(file, frame_data)
+            process_img(file)
 
     globs = {
         '**/*.c': process_c
