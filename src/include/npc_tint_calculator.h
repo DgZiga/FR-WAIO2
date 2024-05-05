@@ -28,6 +28,9 @@ if they are a custom npc, personalize their picture number
 #include "agb_debug/debug.c"
 #include "wild_encounter_custom_table.h"
 
+#include "picture_id_tbl.h"
+#include "picture_pal_tbl.h"
+
 void npc_tint_asm_entrypoint(struct RomNpc* romNpcLoadedAddress);
 
 #endif

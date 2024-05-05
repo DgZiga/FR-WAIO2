@@ -37,6 +37,23 @@ LDR r0, =npc_tint_hijack|1
 BX r0
 .pool
 
+; ------------------------- CUSTOM OVERWORLDS -------------------------
+
+
+;ovverride pal for designated picture_number ow
+.org shared_pal_addr 
+.word SharedPal
+.pool
+
+;ovverride bitmap for designated picture_number ow
+.org gray_poison_tile_addr
+.word poison_grayTiles
+.pool
+
+.org gray_poison_pal_tag_addr
+.halfword shared_pal_tag
+.pool
+
 
 .org freespace
 .thumb

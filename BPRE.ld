@@ -501,6 +501,7 @@ is_light_level_1_2_3_or_6__opensky = 0x080561fc|1;
 log_coords_relative_camera = 0x08063bc4|1;
 mapheader_by_mapnumbers = 0x08055238|1;
 wild_pokemon_data = 0x083c9cb8;
+game_pic_data_tbl = 0x083A3BB0;
 
 /*
  * include/pokeagb/overworld/npc.h

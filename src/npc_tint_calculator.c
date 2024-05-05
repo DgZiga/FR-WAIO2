@@ -35,7 +35,10 @@ void npc_tint_asm_entrypoint(struct RomNpc* romNpcLoadedAddress){
         u8 oam_id = OAM_ID_BY_TYPE[maxI];
 
         free(type_cnt);
-        
+        ///3A5158 palette degli ow
+        //3A3BB0 sprites table
+       // struct PictureData asd = game_pic_data_tbl[0];
+
         romNpcLoadedAddress->type_nr = oam_id; //Override picture number
     }
 }
